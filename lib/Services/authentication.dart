@@ -30,7 +30,7 @@ class Authentication {
         List usernameList = userEmail!.split("@").toList();
         String userName = "${(usernameList[0])}";
         //Firebase Firestore Collection...
-        final users = FirebaseFirestore.instance.collection('users');
+        final users = FirebaseFirestore.instance.collection('Users');
 
         users.doc(uid).get().then((doc) {
           if (doc.exists) {

@@ -17,7 +17,7 @@ class _HomeState extends State<Home> {
   late Map fetchedImages = {};
   int pageIndex = 0;
   static List<Widget> navBarPages = <Widget>[
-    const Homepage(),
+    const HomePage(),
     const AddProducts(),
     const MySettings(),
   ];

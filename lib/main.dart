@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
       home: LoginStatus.prefs.getBool("isLoggedIN") == true ? const Home() : const Login(),
       routes: {
         "/home": (context) => const Home(),
-        "/homePage": (context) => const Homepage(),
+        "/homePage": (context) => const HomePage(),
         "/addProducts": (context) => const AddProducts(),
         "/settings": (context) => const MySettings(),
         "/login": (context) => const Login(),
