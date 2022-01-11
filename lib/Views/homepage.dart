@@ -239,6 +239,7 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         deleting = false;
                       });
+                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

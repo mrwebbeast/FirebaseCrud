@@ -350,8 +350,13 @@ class _AddProductsState extends State<AddProducts> {
               ).then(
                 (value) {
                   setState(() {
+                    id = createCryptoRandomString(32);
+                    productName = "";
+                    productPrice = "";
+                    productDescription = "";
                     uploadingService = false;
                   });
+
                   ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
