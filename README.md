@@ -4,6 +4,7 @@ A Flutter Firebase Crud Application  project by MrWebBeast.
 Developer @MrWebBeast
 
 FLUTTER ASSIGNMENT:
+
 User Story
 AC1 - As a user new user I should be able to login in order to view my product catalogue.
 AC 2 - As a user I can add products with below parameters:

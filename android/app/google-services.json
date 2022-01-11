@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "517521762926",
+    "firebase_url": "https://mrwebbeastcrud-default-rtdb.firebaseio.com",
+    "project_id": "mrwebbeastcrud",
+    "storage_bucket": "mrwebbeastcrud.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517521762926:android:b32d996e0418ce6005547f",
+        "android_client_info": {
+          "package_name": "com.mrwebbeast.crud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517521762926-4ob4e71avthn1395knekaqc0ene6i6ul.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mrwebbeast.crud",
+            "certificate_hash": "df1c8423688dc6243d70be7d27310d7cfed061d0"
+          }
+        },
+        {
+          "client_id": "517521762926-022i4kpevukk6j3q07sjrr2g85j111gu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDi-YUSnCnh5r9DrhExguOvpZJQBX4VVkU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517521762926-022i4kpevukk6j3q07sjrr2g85j111gu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
