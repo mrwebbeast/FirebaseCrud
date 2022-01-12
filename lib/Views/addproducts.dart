@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProducts extends StatefulWidget {
@@ -30,7 +31,9 @@ class _AddProductsState extends State<AddProducts> {
   late String username = usernameList.first;
 
   late File image;
+  late File compressedImage;
   String imagePath = "";
+  String compressedImagePath = "";
   late String _uploadedImageURL;
   bool uploadingService = false;
   String createCryptoRandomString([int length = 32]) {
@@ -73,7 +76,7 @@ class _AddProductsState extends State<AddProducts> {
                       ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
-                            height: 170,
+                            height: 220,
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 color: Colors.white,
@@ -81,44 +84,72 @@ class _AddProductsState extends State<AddProducts> {
                                 border: Border.all(
                                   color: Colors.grey,
                                 )),
-                            child: Row(
+                            child: Column(
                               children: [
-                                Expanded(
-                                  child: Container(
-                                    height: 170,
-                                    width: double.infinity / 2,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                          color: Colors.grey,
-                                        )),
-                                    child: Image.file(
-                                      image,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () {
-                                      getImage();
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.image),
-                                        TextButton(
-                                            onPressed: () {
-                                              getImage();
-                                            },
-                                            child: const Text(
-                                              "Change Photo",
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 170,
+                                        width: double.infinity / 2,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: Colors.grey,
                                             )),
-                                      ],
+                                        child: Image.file(
+                                          image,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          getImage();
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.image),
+                                            TextButton(
+                                                onPressed: () {
+                                                  getImage();
+                                                },
+                                                child: const Text(
+                                                  "Change Photo",
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      imagePath.isNotEmpty
+                                          ? Center(
+                                              child: Text(
+                                                "Original Image Size \n${(image.lengthSync() / 1024).toStringAsFixed(0)} Kb",
+                                                style: const TextStyle(color: Colors.blue),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            )
+                                          : const Text("Size"),
+                                      compressedImagePath.isNotEmpty
+                                          ? Text(
+                                              "Compressed Image Size \n${(compressedImage.lengthSync() / 1024).toStringAsFixed(0)} Kb",
+                                              style: const TextStyle(color: Colors.green),
+                                              textAlign: TextAlign.center,
+                                            )
+                                          : const Text("Size"),
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
@@ -258,16 +289,6 @@ class _AddProductsState extends State<AddProducts> {
     );
   }
 
-  Future<void> getImage() async {
-    final pickedImg = await ImagePicker().pickImage(source: ImageSource.gallery);
-    setState(() {
-      image = File(pickedImg!.path);
-      imagePath = pickedImg.path.toString();
-    });
-  }
-
-  Future<void> uploadImage() async {}
-
   Future<bool> onWillPop() async {
     final shouldPop = await showDialog(
         context: context,
@@ -292,6 +313,21 @@ class _AddProductsState extends State<AddProducts> {
           );
         });
     return shouldPop ?? false;
+  }
+
+  Future<void> getImage() async {
+    final pickedImg = await ImagePicker().pickImage(source: ImageSource.gallery);
+    compressedImage = await compressImage(imagePath: image);
+    setState(() {
+      image = File(pickedImg!.path);
+      imagePath = pickedImg.path.toString();
+      compressedImagePath = compressedImage.path;
+    });
+  }
+
+  Future<File> compressImage({required File imagePath}) async {
+    var path = await FlutterNativeImage.compressImage(imagePath.path, quality: 100, percentage: 10);
+    return path;
   }
 
   Future<void> uploadData() async {
@@ -333,7 +369,7 @@ class _AddProductsState extends State<AddProducts> {
           );
         String fileName = image.path.split("/").last;
         final storage = FirebaseStorage.instance.ref().child("Users/$uid/ProductImages/$fileName");
-        final uploadTask = storage.putFile(image);
+        final uploadTask = storage.putFile(compressedImage);
         await uploadTask.whenComplete(() {
           storage.getDownloadURL().then((fileURL) {
             _uploadedImageURL = fileURL;
