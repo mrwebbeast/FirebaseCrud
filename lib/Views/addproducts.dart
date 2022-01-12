@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,39 +43,122 @@ class _AddProductsState extends State<AddProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Add Product",
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Add Product",
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-          elevation: 1,
-          actions: [
-            TextButton(
-                onPressed: uploadingService == true
-                    ? () {}
-                    : () {
-                        uploadData();
-                      },
-                child: uploadingService == true ? const Text("Uploading...") : const Text("Publish")),
-          ],
         ),
-        body: SingleChildScrollView(
-          child: Form(
-              key: addServiceForm,
-              child: Column(
-                children: [
-                  imagePath.isNotEmpty
-                      ? Padding(
+        elevation: 1,
+        actions: [
+          TextButton(
+              onPressed: uploadingService == true
+                  ? () {}
+                  : () {
+                      uploadData();
+                    },
+              child: uploadingService == true ? const Text("Uploading...") : const Text("Publish")),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+            key: addServiceForm,
+            child: Column(
+              children: [
+                imagePath.isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 220,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: Colors.grey,
+                              )),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      height: 170,
+                                      width: double.infinity / 2,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                          )),
+                                      child: Image.file(
+                                        image,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {
+                                        getImage();
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(Icons.image),
+                                          TextButton(
+                                              onPressed: () {
+                                                getImage();
+                                              },
+                                              child: const Text(
+                                                "Change Photo",
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    imagePath.isNotEmpty
+                                        ? Center(
+                                            child: Text(
+                                              "Original Image Size \n${(image.lengthSync() / 1024).toStringAsFixed(0)} Kb",
+                                              style: const TextStyle(color: Colors.blue),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          )
+                                        : const Text("Size"),
+                                    compressedImagePath.isNotEmpty
+                                        ? Text(
+                                            "Compressed Image Size \n${(compressedImage.lengthSync() / 1024).toStringAsFixed(0)} Kb",
+                                            style: const TextStyle(color: Colors.green),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        : const Text("Size"),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          getImage();
+                        },
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(
-                            height: 220,
+                            height: 170,
                             width: double.infinity,
                             decoration: BoxDecoration(
                                 color: Colors.white,
@@ -84,235 +166,123 @@ class _AddProductsState extends State<AddProducts> {
                                 border: Border.all(
                                   color: Colors.grey,
                                 )),
-                            child: Column(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        height: 170,
-                                        width: double.infinity / 2,
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(5),
-                                            border: Border.all(
-                                              color: Colors.grey,
-                                            )),
-                                        child: Image.file(
-                                          image,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () {
-                                          getImage();
-                                        },
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.image),
-                                            TextButton(
-                                                onPressed: () {
-                                                  getImage();
-                                                },
-                                                child: const Text(
-                                                  "Change Photo",
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                Icon(
+                                  Icons.photo,
+                                  size: 20,
+                                  color: Colors.grey.shade900,
                                 ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      imagePath.isNotEmpty
-                                          ? Center(
-                                              child: Text(
-                                                "Original Image Size \n${(image.lengthSync() / 1024).toStringAsFixed(0)} Kb",
-                                                style: const TextStyle(color: Colors.blue),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            )
-                                          : const Text("Size"),
-                                      compressedImagePath.isNotEmpty
-                                          ? Text(
-                                              "Compressed Image Size \n${(compressedImage.lengthSync() / 1024).toStringAsFixed(0)} Kb",
-                                              style: const TextStyle(color: Colors.green),
-                                              textAlign: TextAlign.center,
-                                            )
-                                          : const Text("Size"),
-                                    ],
+                                const SizedBox(width: 5),
+                                Text(
+                                  "Add Photo",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade900,
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
-                        )
-                      : InkWell(
-                          onTap: () {
-                            getImage();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 170,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                  )),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.photo,
-                                    size: 20,
-                                    color: Colors.grey.shade900,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    "Add Photo",
-                                    style: TextStyle(
-                                      color: Colors.grey.shade900,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                  Row(
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        child: Text(
-                          "Product Detail",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
                         ),
                       ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {
-                        setState(() {
-                          productName = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Product Name",
-                        hintText: "Product Name",
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(5.0),
+                Row(
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      child: Text(
+                        "Product Detail",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.left,
                       ),
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return "Enter Product Name";
-                        } else if (val.length < 2) {
-                          return "Please Enter valid Product Name";
-                        }
-                      },
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          productPrice = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Product Price",
-                        hintText: "Product Price",
-                        prefix: const Text("\$ "),
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) {
+                      setState(() {
+                        productName = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Product Name",
+                      hintText: "Product Name",
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return "Enter Product Price ";
-                        }
-                      },
                     ),
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return "Enter Product Name";
+                      } else if (val.length < 2) {
+                        return "Please Enter valid Product Name";
+                      }
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.text,
-                      onChanged: (value) {
-                        setState(() {
-                          productDescription = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Product Description",
-                        hintText: "Product Description",
-                        border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.blueAccent),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        productPrice = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Product Price",
+                      hintText: "Product Price",
+                      prefix: const Text("\$ "),
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return "Enter Product Description";
-                        } else if (val.length < 20) {
-                          return "Product Description must Contain 20 Words";
-                        }
-                      },
                     ),
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return "Enter Product Price ";
+                      }
+                    },
                   ),
-                ],
-              )),
-        ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.text,
+                    onChanged: (value) {
+                      setState(() {
+                        productDescription = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Product Description",
+                      hintText: "Product Description",
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.blueAccent),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return "Enter Product Description";
+                      } else if (val.length < 20) {
+                        return "Product Description must Contain 20 Words";
+                      }
+                    },
+                  ),
+                ),
+              ],
+            )),
       ),
     );
-  }
-
-  Future<bool> onWillPop() async {
-    final shouldPop = await showDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: const Text("Discard Listing ?"),
-            content: const Text("You Are about to discard listing your Product"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: const Text("Discard"),
-              )
-            ],
-          );
-        });
-    return shouldPop ?? false;
   }
 
   Future<void> getImage() async {
@@ -416,12 +386,9 @@ class _AddProductsState extends State<AddProducts> {
                       backgroundColor: Colors.green,
                     ),
                   );
-
-                  print("Image Uploaded Successfully");
                 },
               );
             } else {
-              print("Url is Null");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   margin: const EdgeInsets.all(10),
@@ -443,9 +410,25 @@ class _AddProductsState extends State<AddProducts> {
             }
           });
         });
-        print("Data Transferred");
       } else {
-        print("Select an Image");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            margin: const EdgeInsets.all(10),
+            shape: const StadiumBorder(),
+            duration: const Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text(
+                  "Select an Image",
+                  style: TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

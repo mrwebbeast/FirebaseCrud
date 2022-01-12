@@ -63,8 +63,14 @@ class _HomeState extends State<Home> {
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
-            title: Text("Hey...${currentUser!.displayName}"),
-            content: const Text("Do You Want To Exit Application"),
+            title: Text(
+              "Hey...${currentUser!.displayName}",
+              style: TextStyle(color: Colors.grey.shade900),
+            ),
+            content: Text(
+              "Do You Want To Exit Application",
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -76,7 +82,10 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },
-                child: const Text("Yes"),
+                child: const Text(
+                  "Exit",
+                  style: TextStyle(color: Colors.red),
+                ),
               )
             ],
           );

@@ -322,12 +322,13 @@ class _HomePageState extends State<HomePage> {
             builder: (context) {
               return CupertinoAlertDialog(
                 title: Text(
-                  "Hey...${currentUser!.displayName}",
-                  style: const TextStyle(
-                    color: Colors.blue,
-                  ),
+                  "Hey ${currentUser!.displayName}",
+                  style: TextStyle(color: Colors.grey.shade900),
                 ),
-                content: const Text("Do You Want To Logout"),
+                content: Text(
+                  "Do You Want To Logout",
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -359,7 +360,10 @@ class _HomePageState extends State<HomePage> {
                       Navigator.pop(context);
                       Navigator.pushReplacementNamed(context, "/login");
                     },
-                    child: const Text("Logout"),
+                    child: const Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.red),
+                    ),
                   )
                 ],
               );
