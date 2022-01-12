@@ -328,7 +328,7 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   Future<File> compressImage({required File imagePath}) async {
-    var path = await FlutterNativeImage.compressImage(imagePath.path, quality: 100, percentage: 10);
+    var path = await FlutterNativeImage.compressImage(imagePath.path, quality: 100, percentage: 30);
     return path;
   }
 
@@ -338,6 +338,7 @@ class _AddProductsState extends State<AddProducts> {
         setState(() {
           uploadingService = true;
         });
+        FocusScope.of(context).unfocus();
         ScaffoldMessenger.of(context)
           ..hideCurrentMaterialBanner()
           ..showMaterialBanner(

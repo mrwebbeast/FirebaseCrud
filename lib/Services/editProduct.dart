@@ -168,6 +168,7 @@ class _EditProductState extends State<EditProduct> {
 
   Future<void> updateProduct({required String id}) async {
     if (updateServiceForm.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
       fireStore.collection("Users").doc(uid).collection("Products").doc(id).update({
         "Name": name,
         "Price": price,
