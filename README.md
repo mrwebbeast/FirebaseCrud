@@ -1,8 +1,6 @@
-# crud
+# Firebase Crud
 
-A Flutter Firebase Crud Application  project by MrWebBeast.
-Developer @MrWebBeast
-
+A Flutter Firebase Crud Application by MrWebBeast.
 FLUTTER ASSIGNMENT:
 
 User Story

@@ -19,7 +19,8 @@ class _HomePageState extends State<HomePage> {
   User? currentUser = FirebaseAuth.instance.currentUser;
   FirebaseStorage storage = FirebaseStorage.instance;
   String uid = FirebaseAuth.instance.currentUser!.uid;
-
+  late CollectionReference<Map<String, dynamic>> productQuery =
+      FirebaseFirestore.instance.collection('Users').doc(uid).collection("Products");
   bool deleting = false;
   @override
   Widget build(BuildContext context) {
@@ -54,17 +55,17 @@ class _HomePageState extends State<HomePage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          FirebaseFirestore.instance.collection('Users').doc(uid).collection("Products");
+          productQuery = FirebaseFirestore.instance.collection('Users').doc(uid).collection("Products");
         },
         child: FirestoreQueryBuilder<Map<String, dynamic>>(
           pageSize: 10,
-          query: FirebaseFirestore.instance.collection('Users').doc(uid).collection("Products"),
+          query: productQuery,
           builder: (context, snapshot, _) {
             if (snapshot.isFetching) {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Something went wrong! ${snapshot.error}'));
+              return Center(child: Text('Something went wrong! \n${snapshot.error}'));
             }
 
             return snapshot.docs.isNotEmpty
