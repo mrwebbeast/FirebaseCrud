@@ -317,10 +317,12 @@ class _AddProductsState extends State<AddProducts> {
 
   Future<void> getImage() async {
     final pickedImg = await ImagePicker().pickImage(source: ImageSource.gallery);
-    compressedImage = await compressImage(imagePath: image);
     setState(() {
       image = File(pickedImg!.path);
       imagePath = pickedImg.path.toString();
+    });
+    compressedImage = await compressImage(imagePath: image);
+    setState(() {
       compressedImagePath = compressedImage.path;
     });
   }
