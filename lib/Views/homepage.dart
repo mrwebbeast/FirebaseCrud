@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebasecrud/Services/authentication.dart';
 import 'package:firebasecrud/Services/editProduct.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire_ui/firestore.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,48 +18,70 @@ class _HomePageState extends State<HomePage> {
   late User? currentUser = FirebaseAuth.instance.currentUser;
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   FirebaseStorage storage = FirebaseStorage.instance;
-
   late String uid = currentUser!.uid;
+  late final usersQuery = FirebaseFirestore.instance.collection('Users').doc(uid).collection("Products");
+
   bool deleting = false;
   @override
   Widget build(BuildContext context) {
-    final MediaQueryData mediaQueryData = MediaQuery.of(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("Firebase Crud"),
+        title: const Text("Products"),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: Colors.grey,
+            foregroundColor: Colors.grey.shade600,
+            backgroundImage: NetworkImage("${currentUser!.photoURL}"),
+          ),
+        ),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(bottom: mediaQueryData.viewInsets.bottom),
-            child: CircleAvatar(
-              backgroundColor: Colors.orangeAccent,
-              foregroundColor: Colors.orangeAccent,
-              backgroundImage: NetworkImage("${currentUser!.photoURL}"),
-              radius: 20,
-            ),
-          )
+          PopupMenuButton(
+            onSelected: (item) => selectedItem(context, item),
+            itemBuilder: (BuildContext context) => [
+              PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Icon(Icons.logout),
+                      Text("Sign Out"),
+                    ],
+                  )),
+            ],
+          ),
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Users')
-              .doc(uid)
-              .collection("Products")
-              .limit(10)
-              .snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) {
-              return const Center(child: Text('Something went wrong'));
+        onRefresh: () async {
+          usersQuery;
+        },
+        child: FirestoreQueryBuilder<Map<String, dynamic>>(
+          pageSize: 10,
+          query: usersQuery,
+          builder: (context, snapshot, _) {
+            if (snapshot.isFetching) {
+              return const CircularProgressIndicator();
             }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+            if (snapshot.hasError) {
+              return Text('Something went wrong! ${snapshot.error}');
             }
-            return ListView(
-              children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+            return ListView.builder(
+              itemCount: snapshot.docs.length,
+              itemBuilder: (context, index) {
+                // if we reached the end of the currently obtained items, we try to
+                // obtain more items
+                if (snapshot.hasMore && index + 1 == snapshot.docs.length) {
+                  // Tell FirestoreQueryBuilder to try to obtain more items.
+                  // It is safe to call this function from within the build method.
+                  snapshot.fetchMore();
+                }
+
+                Map<String, dynamic> data = snapshot.docs[index].data();
+
                 return Column(
                   children: [
                     Padding(
@@ -65,8 +89,8 @@ class _HomePageState extends State<HomePage> {
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(25),
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
                             bottomLeft: Radius.circular(25),
                             bottomRight: Radius.circular(25),
                           ),
@@ -79,14 +103,8 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Row(
                                   children: [
-                                    CircleAvatar(
-                                      backgroundColor: const Color(0xff34aaad),
-                                      foregroundColor: const Color(0xff34aaad),
-                                      backgroundImage: NetworkImage("${currentUser!.photoURL}"),
-                                      radius: 20,
-                                    ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
                                       child: Row(
                                         children: [
                                           Text(
@@ -192,7 +210,7 @@ class _HomePageState extends State<HomePage> {
                     )
                   ],
                 );
-              }).toList(),
+              },
             );
           },
         ),
@@ -294,5 +312,59 @@ class _HomePageState extends State<HomePage> {
             productDesc: description,
           );
         });
+  }
+
+  void selectedItem(BuildContext context, item) {
+    switch (item) {
+      case 0:
+        showDialog(
+            context: context,
+            builder: (context) {
+              return CupertinoAlertDialog(
+                title: Text(
+                  "Hey...${currentUser!.displayName}",
+                  style: const TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+                content: const Text("Do You Want To Logout"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Authentication.signOut(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          margin: const EdgeInsets.all(10),
+                          shape: const StadiumBorder(),
+                          duration: const Duration(milliseconds: 1500),
+                          behavior: SnackBarBehavior.floating,
+                          content: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "Successfully Logout",
+                                style: TextStyle(color: Colors.white),
+                              )
+                            ],
+                          ),
+                          backgroundColor: Colors.blue,
+                        ),
+                      );
+                      Navigator.pop(context);
+                      Navigator.pushReplacementNamed(context, "/login");
+                    },
+                    child: const Text("Logout"),
+                  )
+                ],
+              );
+            });
+        break;
+    }
   }
 }

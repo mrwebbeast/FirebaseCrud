@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mrwebbeast.crud">
    <application
-        android:label="crud"
+        android:label="MrWebBeast"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

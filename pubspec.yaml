@@ -24,6 +24,7 @@ dev_dependencies:
   image_picker: ^0.8.4+4
   cached_network_image: ^3.2.0
   flutter_native_image: ^0.0.6+1
+  flutterfire_ui: ^0.3.1
 
 flutter:
 

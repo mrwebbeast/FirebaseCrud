@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebasecrud/Views/addproducts.dart';
 import 'package:firebasecrud/Views/homepage.dart';
 import 'package:firebasecrud/Views/login.dart';
-import 'package:firebasecrud/Views/mysettings.dart';
 import 'package:firebasecrud/home.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase Crud',
+      title: 'MrWebBeast',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: Colors.white,
@@ -45,7 +44,6 @@ class MyApp extends StatelessWidget {
         "/home": (context) => const Home(),
         "/homePage": (context) => const HomePage(),
         "/addProducts": (context) => const AddProducts(),
-        "/settings": (context) => const MySettings(),
         "/login": (context) => const Login(),
       },
     );

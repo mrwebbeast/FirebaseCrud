@@ -33,7 +33,7 @@ class _LoginState extends State<Login> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Firebase Crud",
+          "MrWebBeast",
           style: TextStyle(color: Colors.grey.shade500),
         ),
         elevation: 0,

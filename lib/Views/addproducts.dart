@@ -48,11 +48,11 @@ class _AddProductsState extends State<AddProducts> {
       onWillPop: onWillPop,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             "Add Product",
             style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 18,
+              color: Colors.blue,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -328,7 +328,7 @@ class _AddProductsState extends State<AddProducts> {
   }
 
   Future<File> compressImage({required File imagePath}) async {
-    var path = await FlutterNativeImage.compressImage(imagePath.path, quality: 100, percentage: 30);
+    var path = await FlutterNativeImage.compressImage(imagePath.path, quality: 100, percentage: 25);
     return path;
   }
 
@@ -389,6 +389,7 @@ class _AddProductsState extends State<AddProducts> {
               ).then(
                 (value) {
                   setState(() {
+                    imageCache!.clear();
                     id = createCryptoRandomString(32);
                     productName = "";
                     productPrice = "";

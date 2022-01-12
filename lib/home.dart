@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebasecrud/Views/addproducts.dart';
 import 'package:firebasecrud/Views/homepage.dart';
-import 'package:firebasecrud/Views/mysettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +18,6 @@ class _HomeState extends State<Home> {
   static List<Widget> navBarPages = <Widget>[
     const HomePage(),
     const AddProducts(),
-    const MySettings(),
   ];
 
   @override
@@ -54,10 +52,6 @@ class _HomeState extends State<Home> {
               BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.briefcase_fill),
                 label: "Products",
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.settings),
-                label: "Setting",
               ),
             ],
           ),
