@@ -22,9 +22,12 @@ class _AddProductsState extends State<AddProducts> {
 
   final addServiceForm = GlobalKey<FormState>();
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
-  String productName = "";
-  String productPrice = "\$0";
-  String productDescription = "";
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController productPriceController = TextEditingController();
+  final TextEditingController productDescriptionController = TextEditingController();
+  late String productName = "";
+  late String productPrice = "";
+  late String productDescription = "";
 
   late List usernameList = currentUser!.email!.split("@");
   late String username = usernameList.first;
@@ -206,11 +209,7 @@ class _AddProductsState extends State<AddProducts> {
                   padding: const EdgeInsets.all(16.0),
                   child: TextFormField(
                     keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() {
-                        productName = value;
-                      });
-                    },
+                    controller: productNameController,
                     decoration: InputDecoration(
                       labelText: "Product Name",
                       hintText: "Product Name",
@@ -231,12 +230,9 @@ class _AddProductsState extends State<AddProducts> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextFormField(
+                    controller: productPriceController,
                     keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        productPrice = value;
-                      });
-                    },
+                    onChanged: (value) {},
                     decoration: InputDecoration(
                       labelText: "Product Price",
                       hintText: "Product Price",
@@ -256,12 +252,7 @@ class _AddProductsState extends State<AddProducts> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: TextFormField(
-                    keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() {
-                        productDescription = value;
-                      });
-                    },
+                    controller: productDescriptionController,
                     decoration: InputDecoration(
                       labelText: "Product Description",
                       hintText: "Product Description",
@@ -307,6 +298,9 @@ class _AddProductsState extends State<AddProducts> {
       if (imagePath.isNotEmpty) {
         setState(() {
           uploadingService = true;
+          productName = productNameController.text;
+          productPrice = productPriceController.text;
+          productDescription = productDescriptionController.text;
         });
         FocusScope.of(context).unfocus();
         ScaffoldMessenger.of(context)
@@ -358,15 +352,6 @@ class _AddProductsState extends State<AddProducts> {
                 },
               ).then(
                 (value) {
-                  setState(() {
-                    imageCache!.clear();
-                    id = createCryptoRandomString(32);
-                    productName = "";
-                    productPrice = "";
-                    productDescription = "";
-                    uploadingService = false;
-                  });
-
                   ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -386,6 +371,14 @@ class _AddProductsState extends State<AddProducts> {
                       backgroundColor: Colors.green,
                     ),
                   );
+                  setState(() {
+                    imageCache!.clear();
+                    id = createCryptoRandomString(32);
+                    productNameController.clear();
+                    productPriceController.clear();
+                    productDescriptionController.clear();
+                    uploadingService = false;
+                  });
                 },
               );
             } else {

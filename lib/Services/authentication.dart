@@ -60,13 +60,10 @@ class Authentication {
 
         LoginStatus.prefs.setBool("isLoggedIN", true);
         Navigator.pushReplacementNamed(context, "/home");
-        print("Successfully SignIn");
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-          print("account-exists-with-different-credential");
           // handle the error here
         } else if (e.code == 'invalid-credential') {
-          print("invalid-credential");
           // handle the error here
         }
       } catch (e) {
@@ -104,7 +101,25 @@ class Authentication {
       );
       Navigator.pushReplacementNamed(context, "/login");
     } catch (e) {
-      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          margin: const EdgeInsets.all(10),
+          shape: const StadiumBorder(),
+          duration: const Duration(milliseconds: 1500),
+          behavior: SnackBarBehavior.floating,
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Error Contact Developer\n${e.toString()}",
+                style: const TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              )
+            ],
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
       return null;
     }
   }

@@ -23,7 +23,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    print("init Home Screen");
   }
 
   @override
